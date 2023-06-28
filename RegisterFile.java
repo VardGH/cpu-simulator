@@ -25,6 +25,14 @@ public class RegisterFile {
         gh = value;
     }
 
+    public byte getDA() {
+        return da;
+    }
+
+    public void setDA(byte value) {
+        da = value;
+    }
+
     public byte registerToOpcode(String register) {
         switch (register) {
             case "AYB":

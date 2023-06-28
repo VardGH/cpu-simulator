@@ -1,11 +1,14 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CPUSimulator {
     private static final byte MEMORY_SIZE = 32;
     private static final byte PROGRAM_SIZE = 32;
     private static final byte PROGRAM_START_ADDRESS = 0;
+    public Map<String, Byte> labelMap = new HashMap<>();
 
     private ALU alu;
     private Memory memory;
@@ -14,26 +17,38 @@ public class CPUSimulator {
     public CPUSimulator() {
         memory = new Memory(MEMORY_SIZE);
         registerFile = new RegisterFile();
-        alu = new ALU(memory, registerFile);
+        alu = new ALU(memory, registerFile, labelMap);
     }
 
-    private static int memoryStartAddress(String filePath) throws IOException {
+
+    public void loadLabels(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        int rowCount = 0;
+        byte address = PROGRAM_START_ADDRESS;
+        String line;
 
-        while (reader.readLine() != null) {
-            rowCount++;
+        while ((line = reader.readLine()) != null) {
+            line = line.trim();
+
+            if (!line.isEmpty()) {
+                String newline = line.replace(", ", " ");
+                String[] tokens = newline.split(" ");
+                String instruction = tokens[0];
+
+                if (instruction.endsWith(":")) {
+                    String label = instruction.substring(0, instruction.length() - 1);
+                    System.out.println("label: " + label);
+                    labelMap.put(label, (byte) (address + 2));
+                    System.out.println("address label: " + (byte) (address + 2));
+                }
+            }
+            ++address;
         }
-
         reader.close();
-        return rowCount;
     }
-
 
     public void loadProgram(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        int MEMORY_START_ADDRESS = memoryStartAddress(filePath);
-
+        loadLabels(filePath);
         byte address = PROGRAM_START_ADDRESS;
 
         String line;
@@ -142,23 +157,44 @@ public class CPUSimulator {
 
                 } else if (instruction.equals("JMP")) {
                     byte opcode = 9;
+                    memory.write(address, (byte) (opcode << 4));
+                    String label = tokens[1];
+                    byte targetAddress = labelMap.get(label);
+                    memory.write(++address, targetAddress);
 
                 } else if (instruction.equals("JG")) {
                     byte opcode = 10;
+                    memory.write(address, (byte) (opcode << 4));
+                    String label = tokens[1];
+                    byte targetAddress = labelMap.get(label);
+                    memory.write(++address, targetAddress);
 
                 } else if (instruction.equals("JL")) {
                     byte opcode = 11;
+                    memory.write(address, (byte) (opcode << 4));
+                    String label = tokens[1];
+                    byte targetAddress = labelMap.get(label);
+                    memory.write(++address, targetAddress);
 
                 } else if (instruction.equals("JE")) {
                     byte opcode = 12;
+                    memory.write(address, (byte) (opcode << 4));
+                    String label = tokens[1];
+                    byte targetAddress = labelMap.get(label);
+                    memory.write(++address, targetAddress);
                     
                 } else if (instruction.equals("HALT")) {
+                    byte opcode = 13;
                     byte data = -1;
-                    memory.write(address, (byte) data);
-                    memory.write(++address, (byte)(data));
+                    memory.write(address, (byte)(opcode << 4));
+                    memory.write(++address, data);
+
+                } else if (instruction.endsWith(":")) {
+                    continue;
                 } else {
                     System.out.println("Invalid instruction: " + instruction);
                 }
+                System.out.println("addres: " + address );
                 ++address;
             }
         }
@@ -203,7 +239,19 @@ public class CPUSimulator {
                 case 8:
                     alu.cmp();
                     break;
-                case -1:
+                case 9:
+                    alu.jmp();
+                    break;
+                case 10:
+                    alu.jg();
+                    break;
+                case 11:
+                    alu.jl();
+                    break;
+                case 12:
+                    alu.je();
+                    break;
+                case 13:
                     return;
                 default:
                     System.out.println("Invalid opcode: " + opcode);
@@ -220,4 +268,11 @@ public class CPUSimulator {
         registerFile.printRegister();
     }
 
+    public void printLabelMap(Map<String, Byte> labelMap) {
+        for (Map.Entry<String, Byte> entry : labelMap.entrySet()) {
+            String label = entry.getKey();
+            Byte value = entry.getValue();
+            System.out.println(label + " -> " + value);
+        }
+    }
 }

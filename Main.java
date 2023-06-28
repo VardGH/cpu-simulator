@@ -10,6 +10,8 @@ public class Main {
             e.printStackTrace();
         }
 
+        cpu.printLabelMap(cpu.labelMap);
+
         cpu.execute();
         cpu.dumpMemory();
         cpu.printRegister();

@@ -1,10 +1,15 @@
+import java.util.Map;
+import java.util.HashMap;
+
 public class ALU {
     private Memory memory;
     private RegisterFile registerFile;
+    private Map<String, Byte> labelMap;
 
-    public ALU(Memory memory, RegisterFile registerFile) {
+    public ALU(Memory memory, RegisterFile registerFile, Map<String, Byte> labelMap) {
         this.memory = memory;
         this.registerFile = registerFile;
+        this.labelMap = labelMap;
     }
 
     public boolean lastBitOne(byte instruction) {
@@ -109,20 +114,43 @@ public class ALU {
     }
 
     public void cmp() {
-        System.out.println("CMP ");
         byte secondInstruction = memory.read((byte)(registerFile.getGH() + 1));
         byte destOpcode = (byte)(secondInstruction >> 4);
         byte srcOpcode = (byte)(secondInstruction & 0x0F);
 
         byte reg1 = registerFile.getRegister(destOpcode);
-        System.out.println("reg1 " + reg1);
         byte reg2 = registerFile.getRegister(srcOpcode);
-        System.out.println("reg2 " + reg2);
-        System.out.println("reg1 - reg2" + (reg1 - reg2));
-
         byte daOpcode = (byte)registerFile.registerToOpcode("DA");
-        System.out.println("daopcode " + daOpcode);
         registerFile.setRegister(daOpcode, (byte) (reg1 - reg2));
     }
 
+    public void jmp() {
+        byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
+        registerFile.setGH(labelAddress);
+ 
+    }
+
+    public void jg() {
+        byte da = registerFile.getDA();
+        if (da > 0) {
+            byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
+            registerFile.setGH(labelAddress);
+        }
+    }
+
+    public void jl() {
+        byte da = registerFile.getDA();
+        if (da < 0) {
+            byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
+            registerFile.setGH(labelAddress);
+        }
+    }
+
+    public void je() {
+        byte da = registerFile.getDA();
+        if (da == 0) {
+            byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
+            registerFile.setGH(labelAddress);
+        }
+    }
 }
