@@ -214,7 +214,7 @@ public class CPUSimulator {
             byte opcode = (byte) (instruction >> 4);
 
             if (opcode < 0 && opcode != -1) {
-                opcode = (byte)~((byte)(opcode ^ (byte) 15));
+                opcode = (byte)~((byte)(opcode ^ (byte) 0x0F));
             }
 
             switch (opcode) {
