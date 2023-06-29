@@ -1,4 +1,4 @@
-# cpu-simulator
+# CPU simulator
 The CPUSimulator represents a CPU simulator that executes instructions stored in memory.
 
 ## Arithmetic and Logic Operations:
