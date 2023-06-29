@@ -27,9 +27,13 @@ public class Memory {
 
     public void dumpMemory() {
         System.out.println("RAM");
-        for (int i = 0; i < memory.length; i++) {
+        for (int i = 0; i < memory.length; ++i) {
             String binaryString = String.format("%8s", Integer.toBinaryString(memory[i] & 0xFF)).replace(' ', '0');
-            System.out.println("[" + i + "]: " + binaryString);
+            if (i < 10) {
+                System.out.println("[" + i + "]:  " + binaryString);
+            } else {
+                System.out.println("[" + i + "]: " + binaryString);
+            }
         }
     }
 }
