@@ -8,7 +8,6 @@ public class CPUSimulator {
     private static final byte MEMORY_SIZE = 32;
     private static final byte PROGRAM_START_ADDRESS = 0;
     public Map<String, Byte> labelMap = new HashMap<>();
-    public byte PROGRAM_SIZE;
 
     private ALU alu;
     private Memory memory;
