@@ -161,6 +161,9 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
+                    if (targetAddress == address) {
+                        ++address;
+                    }
 
                 } else if (instruction.equals("JG")) {
                     byte opcode = 10;
@@ -168,6 +171,9 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
+                    if (targetAddress == address) {
+                        ++address;
+                    }
 
                 } else if (instruction.equals("JL")) {
                     byte opcode = 11;
@@ -175,6 +181,9 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
+                    if (targetAddress == address) {
+                        ++address;
+                    }
 
                 } else if (instruction.equals("JE")) {
                     byte opcode = 12;
@@ -182,7 +191,10 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
-                    
+                    if (targetAddress == address) {
+                        ++address;
+                    }
+
                 } else if (instruction.equals("HALT")) {
                     byte opcode = 13;
                     byte data = -1;

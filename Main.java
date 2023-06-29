@@ -11,7 +11,7 @@ public class Main {
         }
 
         cpu.printLabelMap(cpu.labelMap);
-
+        cpu.dumpMemory();
         cpu.execute();
         cpu.dumpMemory();
         cpu.printRegister();

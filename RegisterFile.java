@@ -33,6 +33,14 @@ public class RegisterFile {
         da = value;
     }
 
+    public byte getZA() {
+        return za;
+    }
+
+    public void setZA(byte value) {
+        za = value;
+    }
+
     public byte registerToOpcode(String register) {
         switch (register) {
             case "AYB":
