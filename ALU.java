@@ -63,7 +63,15 @@ public class ALU {
         byte src = registerFile.getRegister(srcOpcode);
         byte dest = registerFile.getRegister(destOpcode);
 
-        registerFile.setRegister(destOpcode, (byte)(dest - src));
+        int result = src - dest;
+
+        // Overflow handling
+        if (result > Byte.MAX_VALUE || result < Byte.MIN_VALUE) {
+            registerFile.setZA((byte) 1); 
+        } else {
+            registerFile.setRegister(destOpcode, (byte) result);
+            registerFile.setZA((byte) 0); 
+        }
     }
 
     public void mul() {
@@ -74,7 +82,15 @@ public class ALU {
         byte src = registerFile.getRegister(srcOpcode);
         byte dest = registerFile.getRegister(destOpcode);
 
-        registerFile.setRegister(destOpcode, (byte)(dest * src));
+        int result = src * dest;
+
+        // Overflow handling
+        if (result > Byte.MAX_VALUE || result < Byte.MIN_VALUE) {
+            registerFile.setZA((byte) 1); 
+        } else {
+            registerFile.setRegister(destOpcode, (byte) result);
+            registerFile.setZA((byte) 0); 
+        }
     }
 
     public void div() {
@@ -86,22 +102,26 @@ public class ALU {
         byte dest = registerFile.getRegister(destOpcode);
 
         if (src != 0) {
-            registerFile.setRegister(destOpcode, (byte)(dest / src));
+            int result = src / dest;
+            // Overflow handling
+            if (result > Byte.MAX_VALUE || result < Byte.MIN_VALUE) {
+                registerFile.setZA((byte) 1); 
+            } else {
+                registerFile.setRegister(destOpcode, (byte) result);
+                registerFile.setZA((byte) 0); 
+            }
         } else {
             System.out.println("Error: Division by zero");
         }
     }
 
     public void and() {
-        System.out.println("add: ");
         byte secondInstruction = memory.read((byte)(registerFile.getGH() + 1));
         byte destOpcode = (byte)(secondInstruction >> 4);
         byte srcOpcode = (byte)(secondInstruction & 0x0F);
 
         byte src = registerFile.getRegister(srcOpcode);
-        System.out.println("src: " + src);
         byte dest = registerFile.getRegister(destOpcode);
-        System.out.println("dest: " + dest);
 
         registerFile.setRegister(destOpcode, (byte)(dest & src));
     }
