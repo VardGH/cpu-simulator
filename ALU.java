@@ -157,15 +157,22 @@ public class ALU {
 
     public void jmp() {
         byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
-        registerFile.setGH(labelAddress);
- 
+        if (labelAddress == (byte)(registerFile.getGH() + 1)){
+            registerFile.setGH(++labelAddress);
+        } else { 
+            registerFile.setGH(labelAddress);
+        }
     }
 
     public void jg() {
         byte da = registerFile.getDA();
         if (da > 0) {
             byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
-            registerFile.setGH(labelAddress);
+            if (labelAddress == (byte)(registerFile.getGH() + 1)){
+                registerFile.setGH(++labelAddress);
+            } else { 
+                registerFile.setGH(labelAddress);
+            }
         }
     }
 
@@ -173,17 +180,23 @@ public class ALU {
         byte da = registerFile.getDA();
         if (da < 0) {
             byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
-            registerFile.setGH(labelAddress);
+            if (labelAddress == (byte)(registerFile.getGH() + 1)){
+                registerFile.setGH(++labelAddress);
+            } else { 
+                registerFile.setGH(labelAddress);
+            }
         }
     }
 
     public void je() {
         byte da = registerFile.getDA();
-        System.out.println("da: " + da);
         if (da == 0) {
             byte labelAddress = memory.read((byte)(registerFile.getGH() + 1));
-            System.out.println("labelAddress: " + labelAddress);
-            registerFile.setGH(labelAddress);
+            if (labelAddress == (byte)(registerFile.getGH() + 1)){
+                registerFile.setGH(++labelAddress);
+            } else { 
+                registerFile.setGH(labelAddress);
+            }
         }
     }
 }

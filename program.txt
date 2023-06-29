@@ -1,11 +1,10 @@
 MOV BEN, 120 
 MOV AYB, 2
 l1:
-CMP AYB, BEN
-JL end
+CMP BEN, AYB
 JG l2
+JL end
 l2:
-ADD AYB, AYB
 ADD BEN, AYB
 MOV [26], BEN
 end:

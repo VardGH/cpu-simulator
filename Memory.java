@@ -1,16 +1,28 @@
 public class Memory {
     private byte[] memory;
+    private byte programMemorySize;
 
-    public Memory(byte size) {
-        memory = new byte[size];
+    public Memory(byte memorySize) {
+        memory = new byte[memorySize];
+        programMemorySize = 0;
     }
 
     public byte read(byte address) {
+        if (address < 0 || address >= memory.length) {
+            throw new IndexOutOfBoundsException("Invalid memory address: " + address);
+        }
         return memory[address];
     }
 
     public void write(byte address, byte data) {
+        if (address < 0 || address >= memory.length) {
+            throw new IndexOutOfBoundsException("Invalid memory address: " + address);
+        }
         memory[address] = data;
+    }
+
+    public void setProgramSize(byte size) {
+        programMemorySize = size;
     }
 
     public void dumpMemory() {

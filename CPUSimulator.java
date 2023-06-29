@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 public class CPUSimulator {
     private static final byte MEMORY_SIZE = 32;
-    private static final byte PROGRAM_SIZE = 32;
     private static final byte PROGRAM_START_ADDRESS = 0;
     public Map<String, Byte> labelMap = new HashMap<>();
+    public byte PROGRAM_SIZE;
 
     private ALU alu;
     private Memory memory;
@@ -20,13 +20,12 @@ public class CPUSimulator {
         alu = new ALU(memory, registerFile, labelMap);
     }
 
-
     public void loadLabels(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         byte address = PROGRAM_START_ADDRESS;
         String line;
 
-        while ((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null && address < MEMORY_SIZE) {
             line = line.trim();
 
             if (!line.isEmpty()) {
@@ -36,9 +35,7 @@ public class CPUSimulator {
 
                 if (instruction.endsWith(":")) {
                     String label = instruction.substring(0, instruction.length() - 1);
-                    System.out.println("label: " + label);
                     labelMap.put(label, (byte) (address + 2));
-                    System.out.println("address label: " + (byte) (address + 2));
                 }
             }
             ++address;
@@ -53,7 +50,7 @@ public class CPUSimulator {
 
         String line;
 
-        while ((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null && address < MEMORY_SIZE) {
             line = line.trim();
 
             if (!line.isEmpty()) {
@@ -161,9 +158,6 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
-                    if (targetAddress == address) {
-                        ++address;
-                    }
 
                 } else if (instruction.equals("JG")) {
                     byte opcode = 10;
@@ -171,9 +165,6 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
-                    if (targetAddress == address) {
-                        ++address;
-                    }
 
                 } else if (instruction.equals("JL")) {
                     byte opcode = 11;
@@ -181,9 +172,6 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
-                    if (targetAddress == address) {
-                        ++address;
-                    }
 
                 } else if (instruction.equals("JE")) {
                     byte opcode = 12;
@@ -191,22 +179,19 @@ public class CPUSimulator {
                     String label = tokens[1];
                     byte targetAddress = labelMap.get(label);
                     memory.write(++address, targetAddress);
-                    if (targetAddress == address) {
-                        ++address;
-                    }
 
                 } else if (instruction.equals("HALT")) {
                     byte opcode = 13;
                     byte data = -1;
                     memory.write(address, (byte)(opcode << 4));
                     memory.write(++address, data);
+                    memory.setProgramSize(address);
 
                 } else if (instruction.endsWith(":")) {
                     continue;
                 } else {
                     System.out.println("Invalid instruction: " + instruction);
                 }
-                System.out.println("addres: " + address );
                 ++address;
             }
         }
@@ -217,11 +202,10 @@ public class CPUSimulator {
         while (true) {
             byte instruction = memory.read(registerFile.getGH());
             byte opcode = (byte) (instruction >> 4);
-            System.out.println("opcode1 " + opcode);
+
             if (opcode < 0 && opcode != -1) {
                 opcode = (byte)~((byte)(opcode ^ (byte) 15));
             }
-            System.out.println("opcode " + opcode);
 
             switch (opcode) {
                 case 0:
@@ -286,5 +270,13 @@ public class CPUSimulator {
             Byte value = entry.getValue();
             System.out.println(label + " -> " + value);
         }
+    }
+
+    public void setProgramSize(byte address) {
+        PROGRAM_SIZE = address;
+    }
+
+    public byte getProgramSize() {
+        return PROGRAM_SIZE;
     }
 }
