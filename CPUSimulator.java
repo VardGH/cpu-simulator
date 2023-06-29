@@ -47,6 +47,7 @@ public class CPUSimulator {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         loadLabels(filePath);
         byte address = PROGRAM_START_ADDRESS;
+        byte programSize = 0;
 
         String line;
 
@@ -192,9 +193,18 @@ public class CPUSimulator {
                 } else {
                     System.out.println("Invalid instruction: " + instruction);
                 }
-                ++address;
+
+                byte instructionSize = (byte) (instruction.endsWith(":") ? 0 : 1);
+                byte instructionEndAddress = (byte) (address + instructionSize);
+
+                if (instructionEndAddress > programSize) {
+                    programSize = instructionEndAddress;
+                }   
+                address += instructionSize;
             }
         }
+        // Set the program size in memory
+        memory.setProgramSize(programSize);
         reader.close();
     }
 
@@ -270,13 +280,5 @@ public class CPUSimulator {
             Byte value = entry.getValue();
             System.out.println(label + " -> " + value);
         }
-    }
-
-    public void setProgramSize(byte address) {
-        PROGRAM_SIZE = address;
-    }
-
-    public byte getProgramSize() {
-        return PROGRAM_SIZE;
     }
 }

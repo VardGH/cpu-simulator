@@ -15,7 +15,7 @@ public class Memory {
     }
 
     public void write(byte address, byte data) {
-        if (address < 0 || address >= memory.length) {
+        if (address < 0 || address >= memory.length || address < programMemorySize) {
             throw new IndexOutOfBoundsException("Invalid memory address: " + address);
         }
         memory[address] = data;
@@ -26,6 +26,7 @@ public class Memory {
     }
 
     public void dumpMemory() {
+        System.out.println("RAM");
         for (int i = 0; i < memory.length; i++) {
             String binaryString = String.format("%8s", Integer.toBinaryString(memory[i] & 0xFF)).replace(' ', '0');
             System.out.println("[" + i + "]: " + binaryString);
